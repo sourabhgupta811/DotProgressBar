@@ -20,15 +20,15 @@ class DotProgressBar : FrameLayout {
     private var dotRadius = convertDpToPixel(8f)
     private var numberOfDots = 3
     private val animators = mutableListOf<Animator>()
-    private val animationDuration = 1000
+    private var animationDuration = 1000L
     private var minScale = 0.5f
     private var maxScale = 1f
     private var primaryAnimator: ValueAnimator? = null
     private lateinit var dotProgressBar: LinearLayout
+    private var dotBackground = R.drawable.ic_dot
+    private var dotAnimator: ValueAnimator? = null
 
-    constructor(context: Context) : super(context) {
-        init()
-    }
+    constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
@@ -44,6 +44,7 @@ class DotProgressBar : FrameLayout {
         progressBarLayoutParams.gravity = Gravity.CENTER
         dotProgressBar.layoutParams = progressBarLayoutParams
         addView(dotProgressBar)
+        animators.clear()
         for (i in 0 until numberOfDots) {
             val dot = View(context)
             val layoutParams = LayoutParams(dotRadius * 2, dotRadius * 2)
@@ -51,7 +52,7 @@ class DotProgressBar : FrameLayout {
             dot.layoutParams = layoutParams
             dot.scaleX = minScale
             dot.scaleY = minScale
-            dot.setBackgroundResource(R.drawable.ic_dot)
+            dot.setBackgroundResource(dotBackground)
             dotProgressBar.addView(dot)
             val animator = getScaleAnimator(dot)
             animators.add(animator)
@@ -66,14 +67,11 @@ class DotProgressBar : FrameLayout {
         primaryAnimator?.repeatCount = ValueAnimator.INFINITE
         primaryAnimator?.duration = animationDuration.toLong()
         primaryAnimator?.interpolator = LinearInterpolator()
-        startAnimation()
-    }
-
-    private fun convertDpToPixel(dp: Float): Int {
-        return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
     }
 
     private fun getScaleAnimator(view: View): Animator {
+        if (dotAnimator != null)
+            return dotAnimator as ValueAnimator
         val animator = ValueAnimator.ofFloat(minScale, maxScale)
         animator.addUpdateListener {
             view.scaleX = it.animatedValue as Float
@@ -98,14 +96,81 @@ class DotProgressBar : FrameLayout {
         return primaryAnimator!!.isRunning
     }
 
-    fun setDotBackground(backgroundResource: Int) {
-        for (childNumber in 0 until dotProgressBar.childCount)
-            dotProgressBar.getChildAt(childNumber).setBackgroundResource(backgroundResource)
-    }
-
     override fun setVisibility(visibility: Int) {
         if (visibility == View.VISIBLE) startAnimation()
         else stopAnimation()
         super.setVisibility(visibility)
     }
+
+    companion object
+    class Builder {
+        private var margin = 4
+        private var dotRadius = 8
+        private var numberOfDots = 3
+        private var animationDuration = 1000L
+        private var minScale = 0.5f
+        private var maxScale = 1f
+        private var primaryAnimator: ValueAnimator? = null
+        private var dotBackground = R.drawable.ic_dot
+        private var dotAnimator: ValueAnimator? = null
+        fun build(context: Context): DotProgressBar {
+            val dotProgressBar = DotProgressBar(context)
+            dotProgressBar.maxScale = maxScale
+            dotProgressBar.minScale = minScale
+            dotProgressBar.numberOfDots = numberOfDots
+            dotProgressBar.animationDuration = animationDuration
+            dotProgressBar.margin = margin
+            dotProgressBar.dotRadius = dotRadius
+            dotProgressBar.primaryAnimator = primaryAnimator
+            dotProgressBar.dotBackground = dotBackground
+            dotProgressBar.init()
+            return dotProgressBar
+        }
+
+        fun setMargin(margin: Int): Builder {
+            this.margin = margin
+            return this
+        }
+
+        fun setdotRadius(dotRadius: Int): Builder {
+            this.dotRadius = dotRadius
+            return this
+        }
+
+        fun setNumberOfDots(numberOfDots: Int): Builder {
+            this.numberOfDots = numberOfDots
+            return this
+        }
+
+        fun setMaxScale(maxScale: Float): Builder {
+            this.maxScale = maxScale
+            return this
+        }
+
+        fun setMinScale(minScale: Float): Builder {
+            this.minScale = minScale
+            return this
+        }
+
+        fun setAnimationDuration(duration: Long): Builder {
+            this.animationDuration = duration
+            return this
+        }
+
+        fun setDotBackground(dotBackground: Int): Builder {
+            this.dotBackground = dotBackground
+            return this
+        }
+
+        fun setDotAnimator(animator: ValueAnimator): Builder {
+            this.dotAnimator = animator
+            return this
+        }
+
+    }
+
+    private fun convertDpToPixel(dp: Float): Int {
+        return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
+    }
+
 }
