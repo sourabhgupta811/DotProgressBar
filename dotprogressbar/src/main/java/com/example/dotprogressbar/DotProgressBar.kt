@@ -16,8 +16,8 @@ import android.view.animation.LinearInterpolator
  */
 
 class DotProgressBar : FrameLayout {
-    private var margin = convertDpToPixel(4f)
-    private var dotRadius = convertDpToPixel(8f)
+    private var margin:Int = convertDpToPixel(4f,context)
+    private var dotRadius:Int = convertDpToPixel(8f,context)
     private var numberOfDots = 3
     private val animators = mutableListOf<Animator>()
     private var animationDuration = 1000L
@@ -102,7 +102,6 @@ class DotProgressBar : FrameLayout {
         super.setVisibility(visibility)
     }
 
-    companion object
     class Builder {
         private var margin = 4
         private var dotRadius = 8
@@ -112,15 +111,14 @@ class DotProgressBar : FrameLayout {
         private var maxScale = 1f
         private var primaryAnimator: ValueAnimator? = null
         private var dotBackground = R.drawable.ic_dot
-        private var dotAnimator: ValueAnimator? = null
         fun build(context: Context): DotProgressBar {
             val dotProgressBar = DotProgressBar(context)
             dotProgressBar.maxScale = maxScale
             dotProgressBar.minScale = minScale
             dotProgressBar.numberOfDots = numberOfDots
             dotProgressBar.animationDuration = animationDuration
-            dotProgressBar.margin = margin
-            dotProgressBar.dotRadius = dotRadius
+            dotProgressBar.margin = convertDpToPixel(margin.toFloat(),context)
+            dotProgressBar.dotRadius = convertDpToPixel(dotRadius.toFloat(),context)
             dotProgressBar.primaryAnimator = primaryAnimator
             dotProgressBar.dotBackground = dotBackground
             dotProgressBar.init()
@@ -161,16 +159,13 @@ class DotProgressBar : FrameLayout {
             this.dotBackground = dotBackground
             return this
         }
+    }
 
-        fun setDotAnimator(animator: ValueAnimator): Builder {
-            this.dotAnimator = animator
-            return this
+    companion object {
+        fun convertDpToPixel(dp: Float,context: Context): Int {
+            return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
         }
-
     }
 
-    private fun convertDpToPixel(dp: Float): Int {
-        return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
-    }
 
 }
