@@ -78,8 +78,8 @@ class DotProgressBar : FrameLayout {
             return dotAnimator as ValueAnimator
         val animator = ValueAnimator.ofFloat(minScale, maxScale)
         animator.addUpdateListener {
-            view.translationY = -100*(it.animatedValue as Float)
-//            view.scaleY = it.animatedValue as Float
+            view.scaleX = it.animatedValue as Float
+            view.scaleY = it.animatedValue as Float
         }
         animator.duration = animationDuration / numberOfDots.toLong()
         animator.repeatCount = 1
