@@ -12,6 +12,7 @@ From XML
         android:id="@+id/dotProgressBar"
         android:layout_width="match_parent" android:layout_height="match_parent"/>
 ```
+![](bouncy_progress_bar.gif)
 From Kotlin
 
 ```
