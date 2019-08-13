@@ -13,10 +13,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_second)
-        val dotAnimator = ValueAnimator.ofFloat(0f,1f)
-        dotAnimator.addUpdateListener{
-
-        }
         val dotProgressBar = DotProgressBar.Builder()
             .setMargin(4)
             .setAnimationDuration(2000)
